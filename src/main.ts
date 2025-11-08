@@ -32,7 +32,10 @@ async function bootstrap() {
   // - origin: origen permitido (leer de .env FRONTEND_URL o localhost)
   // - credentials: permite cookies / credenciales (útil si usas cookies httpOnly)
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [
+      process.env.FRONTEND_URL || 'http://localhost:3000',
+      'http://localhost:3001',
+    ],
     credentials: true,
   });
 

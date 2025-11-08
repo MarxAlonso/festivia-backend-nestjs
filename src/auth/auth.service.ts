@@ -108,7 +108,7 @@ export class AuthService {
    * @returns Tokens y datos del usuario (misma estructura que login)
    * @throws UnauthorizedException si el email ya existe
    */
-  async register(email: string, password: string, firstName: string, lastName: string, phone?: string) {
+  async register(email: string, password: string, firstName: string, lastName: string, phone?: string, role?: string) {
     // Check if user already exists
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
@@ -126,6 +126,7 @@ export class AuthService {
       lastName,
       phone,
       status: UserStatus.ACTIVE,
+      role: role as any, // Use the provided role or default from entity
     });
 
     const savedUser = await this.userRepository.save(user);

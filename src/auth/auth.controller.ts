@@ -32,6 +32,7 @@ export class AuthController {
       createUserDto.firstName,
       createUserDto.lastName,
       createUserDto.phone,
+      createUserDto.role, // Pass the role field
     );
   }
 
