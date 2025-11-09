@@ -11,6 +11,9 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { TemplatesService } from './templates.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { UserRole } from '../database/entities/user.entity';
 
 @ApiTags('templates')
 @ApiBearerAuth()
@@ -20,6 +23,8 @@ export class TemplatesController {
   constructor(private readonly templatesService: TemplatesService) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a new template' })
   @ApiResponse({ status: 201, description: 'Template created successfully' })
   create(@Body() templateData: any) {
@@ -42,6 +47,8 @@ export class TemplatesController {
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update template' })
   @ApiResponse({ status: 200, description: 'Template updated successfully' })
   update(@Param('id') id: string, @Body() templateData: any) {
@@ -49,6 +56,8 @@ export class TemplatesController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete template' })
   @ApiResponse({ status: 200, description: 'Template deleted successfully' })
   remove(@Param('id') id: string) {

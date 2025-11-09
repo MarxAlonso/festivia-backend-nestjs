@@ -9,6 +9,7 @@ import { RsvpModule } from './rsvp/rsvp.module';
 import { PaymentsModule } from './payments/payments.module';
 import { EmailModule } from './email/email.module';
 import { databaseConfig } from './config/database.config';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { databaseConfig } from './config/database.config';
     AuthModule,
     UsersModule,
     TemplatesModule,
+    EventsModule,
     InvitationsModule,
     RsvpModule,
     PaymentsModule,
