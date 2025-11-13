@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.ts": {
-      "runtime": "@vercel/node@1.8.17"
-    }
-  },
+  "builds": [
+    { "src": "api/index.ts", "use": "@vercel/node" }
+  ],
   "routes": [
     { "src": "/(.*)", "dest": "api/index.ts" }
-  ]
+  ],
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "nodejs22.x"
+    }
+  }
 }
