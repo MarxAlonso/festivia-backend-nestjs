@@ -102,4 +102,14 @@ export class InvitationsController {
     const base = (frontendOrigins[0] || process.env.FRONTEND_URL || 'http://localhost:3000').trim();
     return this.invitationsService.generateUniqueLink(id, organizerId, base);
   }
+
+  @Get(':id/confirmations')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ORGANIZER)
+  @ApiOperation({ summary: 'List external confirmations for invitation (organizer only)' })
+  @ApiResponse({ status: 200, description: 'Confirmations retrieved successfully' })
+  listConfirmations(@Param('id') id: string, @Request() req: any) {
+    const organizerId: string = req.user?.userId;
+    return this.invitationsService.listExternalConfirmations(id, organizerId);
+  }
 }

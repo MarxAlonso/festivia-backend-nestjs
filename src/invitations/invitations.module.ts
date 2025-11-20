@@ -7,10 +7,11 @@ import { Invitation } from '../database/entities/invitation.entity';
 import { Guest } from '../database/entities/guest.entity';
 import { Event } from '../database/entities/event.entity';
 import { Template } from '../database/entities/template.entity';
+import { ExternalConfirmation } from '../database/entities/external-confirmation.entity';
 import { EmailModule } from '../email/email.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Invitation, Guest, Event, Template]), EmailModule],
+  imports: [TypeOrmModule.forFeature([Invitation, Guest, Event, Template, ExternalConfirmation]), EmailModule],
   controllers: [InvitationsController, PublicInvitationsController],
   providers: [InvitationsService],
   exports: [InvitationsService],

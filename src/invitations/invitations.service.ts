@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Invitation } from '../database/entities/invitation.entity';
 import { Guest } from '../database/entities/guest.entity';
 import { EmailService } from '../email/email.service';
+import { ExternalConfirmation } from '../database/entities/external-confirmation.entity';
 import { Event } from '../database/entities/event.entity';
 import { Template } from '../database/entities/template.entity';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
@@ -19,6 +20,8 @@ export class InvitationsService {
     private eventRepository: Repository<Event>,
     @InjectRepository(Template)
     private templateRepository: Repository<Template>,
+    @InjectRepository(ExternalConfirmation)
+    private confirmationRepository: Repository<ExternalConfirmation>,
     private emailService: EmailService,
   ) {}
 
@@ -172,5 +175,23 @@ export class InvitationsService {
           }
         : undefined,
     };
+  }
+
+  async createExternalConfirmationBySlug(slug: string, name: string, lastName: string) {
+    const invitation = await this.invitationRepository.findOne({ where: { uniqueLink: slug } });
+    if (!invitation) throw new NotFoundException('Invitation not found');
+    const entity = this.confirmationRepository.create({ invitationId: invitation.id, name, lastName });
+    const saved = await this.confirmationRepository.save(entity);
+    return { id: saved.id, name: saved.name, lastName: saved.lastName, createdAt: saved.createdAt };
+  }
+
+  async listExternalConfirmations(invitationId: string, organizerId: string) {
+    const invitation = await this.invitationRepository.findOne({ where: { id: invitationId } });
+    if (!invitation) throw new NotFoundException('Invitation not found');
+    if (invitation.createdById !== organizerId) {
+      throw new ForbiddenException('You do not own this invitation');
+    }
+    const list = await this.confirmationRepository.find({ where: { invitationId }, order: { createdAt: 'DESC' } });
+    return list.map((c) => ({ id: c.id, name: c.name, lastName: c.lastName, createdAt: c.createdAt }));
   }
 }

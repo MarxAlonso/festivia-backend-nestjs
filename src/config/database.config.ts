@@ -7,6 +7,7 @@ import { Invitation } from '../database/entities/invitation.entity';
 import { Guest } from '../database/entities/guest.entity';
 import { Rsvp } from '../database/entities/rsvp.entity';
 import { Payment } from '../database/entities/payment.entity';
+import { ExternalConfirmation } from '../database/entities/external-confirmation.entity';
 
 export const databaseConfig = (configService: ConfigService): TypeOrmModuleOptions => {
   const envUrl = configService.get<string>('FESTIVIABD_URL');
@@ -26,7 +27,7 @@ export const databaseConfig = (configService: ConfigService): TypeOrmModuleOptio
     return {
       type: 'postgres',
       url: databaseUrl,
-      entities: [User, Event, Template, Invitation, Guest, Rsvp, Payment],
+      entities: [User, Event, Template, Invitation, Guest, Rsvp, Payment, ExternalConfirmation],
       migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
       synchronize: !isProd,
       logging: nodeEnv === 'development',
@@ -44,7 +45,7 @@ export const databaseConfig = (configService: ConfigService): TypeOrmModuleOptio
     username: configService.get('DB_USERNAME', 'postgres'),
     password: configService.get('DB_PASSWORD', ''),
     database: configService.get('DB_NAME', 'celebria'),
-    entities: [User, Event, Template, Invitation, Guest, Rsvp, Payment],
+    entities: [User, Event, Template, Invitation, Guest, Rsvp, Payment, ExternalConfirmation],
     migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
     synchronize: !isProd,
     logging: nodeEnv === 'development',

@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { InvitationsService } from './invitations.service';
 
@@ -13,5 +13,17 @@ export class PublicInvitationsController {
   @ApiResponse({ status: 404, description: 'Invitation not found' })
   findBySlug(@Param('slug') slug: string) {
     return this.invitationsService.findByUniqueLink(slug);
+  }
+
+  @Post(':slug/confirmations')
+  @ApiOperation({ summary: 'Create external confirmation for public invitation' })
+  @ApiResponse({ status: 201, description: 'Confirmation created successfully' })
+  createConfirmation(
+    @Param('slug') slug: string,
+    @Body() body: { name: string; lastName: string }
+  ) {
+    const name = body?.name || '';
+    const lastName = body?.lastName || '';
+    return this.invitationsService.createExternalConfirmationBySlug(slug, name, lastName);
   }
 }
