@@ -194,4 +194,39 @@ export class InvitationsService {
     const list = await this.confirmationRepository.find({ where: { invitationId }, order: { createdAt: 'DESC' } });
     return list.map((c) => ({ id: c.id, name: c.name, lastName: c.lastName, createdAt: c.createdAt }));
   }
+
+  async updateExternalConfirmation(
+    invitationId: string,
+    organizerId: string,
+    confirmationId: string,
+    patch: { name?: string; lastName?: string },
+  ) {
+    const invitation = await this.invitationRepository.findOne({ where: { id: invitationId } });
+    if (!invitation) throw new NotFoundException('Invitation not found');
+    if (invitation.createdById !== organizerId) {
+      throw new ForbiddenException('You do not own this invitation');
+    }
+    const conf = await this.confirmationRepository.findOne({ where: { id: confirmationId } });
+    if (!conf || conf.invitationId !== invitationId) {
+      throw new NotFoundException('Confirmation not found');
+    }
+    if (typeof patch.name === 'string') conf.name = patch.name;
+    if (typeof patch.lastName === 'string') conf.lastName = patch.lastName;
+    const saved = await this.confirmationRepository.save(conf);
+    return { id: saved.id, name: saved.name, lastName: saved.lastName, createdAt: saved.createdAt };
+  }
+
+  async removeExternalConfirmation(invitationId: string, organizerId: string, confirmationId: string) {
+    const invitation = await this.invitationRepository.findOne({ where: { id: invitationId } });
+    if (!invitation) throw new NotFoundException('Invitation not found');
+    if (invitation.createdById !== organizerId) {
+      throw new ForbiddenException('You do not own this invitation');
+    }
+    const conf = await this.confirmationRepository.findOne({ where: { id: confirmationId } });
+    if (!conf || conf.invitationId !== invitationId) {
+      throw new NotFoundException('Confirmation not found');
+    }
+    await this.confirmationRepository.remove(conf);
+    return { ok: true };
+  }
 }

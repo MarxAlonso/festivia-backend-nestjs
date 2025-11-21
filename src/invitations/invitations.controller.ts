@@ -112,4 +112,33 @@ export class InvitationsController {
     const organizerId: string = req.user?.userId;
     return this.invitationsService.listExternalConfirmations(id, organizerId);
   }
+
+  @Patch(':id/confirmations/:confirmationId')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ORGANIZER)
+  @ApiOperation({ summary: 'Update an external confirmation (organizer only)' })
+  @ApiResponse({ status: 200, description: 'Confirmation updated successfully' })
+  updateConfirmation(
+    @Param('id') id: string,
+    @Param('confirmationId') confirmationId: string,
+    @Body() body: { name?: string; lastName?: string },
+    @Request() req: any,
+  ) {
+    const organizerId: string = req.user?.userId;
+    return this.invitationsService.updateExternalConfirmation(id, organizerId, confirmationId, body || {});
+  }
+
+  @Delete(':id/confirmations/:confirmationId')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ORGANIZER)
+  @ApiOperation({ summary: 'Delete an external confirmation (organizer only)' })
+  @ApiResponse({ status: 200, description: 'Confirmation deleted successfully' })
+  deleteConfirmation(
+    @Param('id') id: string,
+    @Param('confirmationId') confirmationId: string,
+    @Request() req: any,
+  ) {
+    const organizerId: string = req.user?.userId;
+    return this.invitationsService.removeExternalConfirmation(id, organizerId, confirmationId);
+  }
 }
